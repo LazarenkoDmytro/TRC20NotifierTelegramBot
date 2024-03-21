@@ -24,7 +24,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
-    // HttpComponents Client
+    // HttpComponents Client to make HTTP requests
     implementation("org.apache.httpcomponents:httpclient-osgi:4.5.14")
 }
 

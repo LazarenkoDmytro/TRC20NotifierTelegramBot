@@ -3,23 +3,12 @@
  */
 package org.example;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 public class App {
     public static void main(String[] args) {
-        String tronscanApiKey = null;
-        Properties properties = new Properties();
-        try (InputStream input = new FileInputStream("app/src/main/resources/config.properties")) {
-            properties.load(input);
-            tronscanApiKey = properties.getProperty("tronscanApiKey");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String pathToProperties = "app/src/main/resources/config.properties";
+        PropertyExtractor propertyExtractor = new PropertyExtractor(pathToProperties);
 
-        assert(tronscanApiKey != null);
+        String tronscanApiKey = propertyExtractor.getProperty("tronscanApiKey");
 
         TronscanClient tronscanClient = new TronscanClient(tronscanApiKey);
         System.out.println(tronscanClient.getTRC20TransfersList("TMHnkLQseDqUyN9LxBxrgMrYfv24s6aaiM"));
