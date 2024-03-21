@@ -10,13 +10,18 @@ import java.util.Properties;
 
 public class App {
     public static void main(String[] args) {
-        String tronscanApiKey = "default";
+        String tronscanApiKey = null;
         Properties properties = new Properties();
         try (InputStream input = new FileInputStream("app/src/main/resources/config.properties")) {
             properties.load(input);
             tronscanApiKey = properties.getProperty("tronscanApiKey");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        assert(tronscanApiKey != null);
+
+        TronscanClient tronscanClient = new TronscanClient(tronscanApiKey);
+        System.out.println(tronscanClient.getTRC20TransfersList("TMHnkLQseDqUyN9LxBxrgMrYfv24s6aaiM"));
     }
 }

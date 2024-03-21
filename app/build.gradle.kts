@@ -23,6 +23,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // HttpComponents Client
+    implementation("org.apache.httpcomponents:httpclient-osgi:4.5.14")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
