@@ -16,7 +16,7 @@ public class TronscanClient {
         client = HttpClients.createDefault();
     }
 
-    public String getTRC20TransfersList(String address) {
+    public Root getTRC20TransfersList(String address) {
         String baseUrl = "https://apilist.tronscanapi.com/api/token_trc20/transfers?relatedAddress=%s";
         String endPoint = String.format(baseUrl, address);
         StringBuilder responseBody = new StringBuilder();
@@ -36,6 +36,6 @@ public class TronscanClient {
             e.printStackTrace();
         }
 
-        return responseBody.toString();
+        return JsonConverter.fromJson(responseBody.toString());
     }
 }

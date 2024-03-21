@@ -9,8 +9,7 @@ public class JsonConverter {
         gson = new Gson();
     }
 
-    public static Root fromJson(TronscanClient tronscanClient, String address) {
-        String TRC20TransfersList = tronscanClient.getTRC20TransfersList(address);
-        return gson.fromJson(TRC20TransfersList, Root.class);
+    public static Root fromJson(String responseBody) {
+        return gson.fromJson(responseBody, Root.class);
     }
 }

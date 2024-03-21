@@ -16,7 +16,7 @@ public class App {
 
         TronscanClient tronscanClient = new TronscanClient(tronscanApiKey);
 
-        Root root = JsonConverter.fromJson(tronscanClient, address);
+        Root root = tronscanClient.getTRC20TransfersList(address);
         System.out.println(root.toString());
     }
 }
