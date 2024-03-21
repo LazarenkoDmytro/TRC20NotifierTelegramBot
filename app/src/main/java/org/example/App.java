@@ -3,12 +3,20 @@
  */
 package org.example;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        String tronscanApiKey = "default";
+        Properties properties = new Properties();
+        try (InputStream input = new FileInputStream("app/src/main/resources/config.properties")) {
+            properties.load(input);
+            tronscanApiKey = properties.getProperty("tronscanApiKey");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }
