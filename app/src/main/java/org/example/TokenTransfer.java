@@ -15,6 +15,10 @@ public final class TokenTransfer {
         return block_ts;
     }
 
+    public String getFormattedDate() {
+        return DateUtils.formatTimestamp(block_ts);
+    }
+
     public String from_address() {
         return from_address;
     }
@@ -30,9 +34,9 @@ public final class TokenTransfer {
     @Override
     public String toString() {
         return "Transaction ID: " + transaction_id +
-                "\nTransaction time: " + block_ts() +
-                "\nFrom Address: " + from_address() +
-                "\nTo Address: " + to_address() +
+                "\nTransaction time: " + getFormattedDate() +
+                "\nFrom Address: " + from_address +
+                "\nTo Address: " + to_address +
                 "\nQuantity: " + (double) quant / 1e6 + "$";
     }
 }
