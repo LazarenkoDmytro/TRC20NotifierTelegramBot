@@ -23,6 +23,12 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // HttpComponents Client to make HTTP requests
+    implementation("org.apache.httpcomponents:httpclient-osgi:4.5.14")
+
+    // Google GSON to parse JSON
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
