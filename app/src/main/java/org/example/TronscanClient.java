@@ -17,8 +17,8 @@ public class TronscanClient {
     }
 
     public Root getTRC20TransfersList(String address) {
-        String baseUrl = "https://apilist.tronscanapi.com/api/token_trc20/transfers?relatedAddress=%s";
-        String endPoint = String.format(baseUrl, address);
+        String baseUrl = "https://apilist.tronscanapi.com/api/transaction?sort=%s&limit=%s&address=%s";
+        String endPoint = String.format(baseUrl, "-timestamp", 50, address);
         StringBuilder responseBody = new StringBuilder();
 
         try {

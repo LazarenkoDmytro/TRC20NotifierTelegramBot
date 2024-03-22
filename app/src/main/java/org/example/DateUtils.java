@@ -12,7 +12,7 @@ public class DateUtils {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public static String formatTimestamp(long block_ts) {
-        return dateFormat.format(new Date(block_ts));
+    public static String formatTimestamp(long timestamp) {
+        return dateFormat.format(new Date(timestamp));
     }
 }
