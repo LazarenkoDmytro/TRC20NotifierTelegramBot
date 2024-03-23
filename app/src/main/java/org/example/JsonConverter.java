@@ -9,7 +9,7 @@ public class JsonConverter {
         gson = new Gson();
     }
 
-    public static Root fromJson(String responseBody) {
-        return gson.fromJson(responseBody, Root.class);
+    public static <T> T fromJson(String jsonString, Class<T> tClass) {
+        return gson.fromJson(jsonString, tClass);
     }
 }

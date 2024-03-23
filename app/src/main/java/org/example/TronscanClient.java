@@ -16,9 +16,7 @@ public class TronscanClient {
         client = HttpClients.createDefault();
     }
 
-    public Root getTRC20TransfersList(String address) {
-        String baseUrl = "https://apilist.tronscanapi.com/api/transaction?sort=%s&limit=%s&address=%s";
-        String endPoint = String.format(baseUrl, "-timestamp", 50, address);
+    private String getRequestResponse(String endPoint) {
         StringBuilder responseBody = new StringBuilder();
 
         try {
@@ -36,6 +34,22 @@ public class TronscanClient {
             e.printStackTrace();
         }
 
-        return JsonConverter.fromJson(responseBody.toString());
+        return responseBody.toString();
+    }
+
+    public Root getTRC20TransactionsList(String address) {
+        String baseUrl = "https://apilist.tronscanapi.com/api/transaction?sort=%s&limit=%s&address=%s";
+        String endPoint = String.format(baseUrl, "-timestamp", 50, address);
+
+        String requestResponse = getRequestResponse(endPoint);
+        return JsonConverter.fromJson(requestResponse, Root.class);
+    }
+
+    public TransactionInfo getTransactionInfo(String hash) {
+        String baseUrl = "https://apilist.tronscanapi.com/api/transaction-info?hash=%s";
+        String endPoint = String.format(baseUrl, hash);
+
+        String requestResponse = getRequestResponse(endPoint);
+        return JsonConverter.fromJson(requestResponse, TransactionInfo.class);
     }
 }

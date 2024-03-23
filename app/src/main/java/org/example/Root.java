@@ -3,12 +3,7 @@ package org.example;
 import java.util.List;
 
 public final class Root {
-    private int total;
     private List<Transaction> data;
-
-    public int getTotal() {
-        return total;
-    }
 
     public List<Transaction> getData() {
         return data;
@@ -16,7 +11,7 @@ public final class Root {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("Total: " + total);
+        StringBuilder stringBuilder = new StringBuilder();
         for (Transaction token_transfer : data) {
             stringBuilder.append("\n").append("\n").append(token_transfer.toString());
         }
