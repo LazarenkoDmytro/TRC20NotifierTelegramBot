@@ -40,3 +40,5 @@ out/
 
 # Ignore Gradle build output directory
 build
+
+!app.jar
