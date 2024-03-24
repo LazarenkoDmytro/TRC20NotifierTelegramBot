@@ -52,6 +52,16 @@ public class TransactionPoller {
                     StringBuilder messageBuilder = new StringBuilder("New transaction" + ending + " for address " + address + ":\n");
 
                     for (Transaction currentTransaction : difference.reversed()) {
+                        if (currentTransaction.getAmount() == 0) {
+                            TransactionInfo transactionInfo = tronscanClient.getTransactionInfo(currentTransaction.getHash());
+                            TokenTransferInfo tokenTransferInfo = transactionInfo.getTokenTransferInfo();
+
+                            currentTransaction.setToAddress(tokenTransferInfo.getTo_address());
+                            currentTransaction.setAmount(tokenTransferInfo.getAmount_str());
+                            currentTransaction.setTokenTypeSymbol(tokenTransferInfo.getSymbol());
+                            currentTransaction.setDecimals(tokenTransferInfo.getDecimals());
+                        }
+
                         messageBuilder.append("\n").append(currentTransaction).append("\n");
                     }
 

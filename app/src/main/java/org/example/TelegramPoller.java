@@ -48,8 +48,8 @@ public class TelegramPoller {
 
                         // Process commands from users and take actions accordingly
                         if (text.equals("/start")) {
-                            telegramBotClient.sendMessage(id, "Please enter your address:");
-                        } else if (text.startsWith("/trackAddress ")) {
+                            telegramBotClient.sendMessage(id, "Hello! Start to track a specified TRC20 wallet using /trackaddress command");
+                        } else if (text.startsWith("/trackaddress ")) {
                             // Handle address tracking
                             String address = text.substring(14);
 
@@ -60,7 +60,7 @@ public class TelegramPoller {
                                 transactionPoller.addAddress(address);
                                 AddressManager.addReceiver(address, id);
                             }
-                        } else if (text.startsWith("/untrackAddress ")) {
+                        } else if (text.startsWith("/untrackaddress ")) {
                             // Handle address untracking
                             String address = text.substring(16);
 
