@@ -3,17 +3,23 @@
  */
 package org.example;
 
+import java.util.ArrayList;
+
 public class App {
     public static void main(String[] args) {
-        String address = "TCGmCEqk1WzLBFxMf1FsWGs2AYemxdjbQR";
-
         String pathToProperties = "app/src/main/resources/config.properties";
         PropertyExtractor propertyExtractor = new PropertyExtractor(pathToProperties);
 
         String tronscanApiKey = propertyExtractor.getProperty("tronscanApiKey");
         TronscanClient tronscanClient = new TronscanClient(tronscanApiKey);
 
-        TransactionPoller transactionPoller = new TransactionPoller(tronscanClient, address);
+        String telegramBotApiKey = propertyExtractor.getProperty("telegramBotApiKey");
+        TelegramBotClient telegramBotClient = new TelegramBotClient(telegramBotApiKey);
+
+        TransactionPoller transactionPoller = new TransactionPoller(tronscanClient, telegramBotClient, new ArrayList<>());
         transactionPoller.startPolling();
+
+        TelegramPoller telegramPoller = new TelegramPoller(telegramBotClient, transactionPoller);
+        telegramPoller.startPolling();
     }
 }
