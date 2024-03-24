@@ -1,55 +1,89 @@
 package org.example;
 
-import java.util.List;
-import java.util.ListIterator;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
+/**
+ * Polls for new transactions on specified addresses and notifies subscribed users via Telegram.
+ */
 public class TransactionPoller {
+    // Executor service for scheduling the polling task at fixed intervals
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    // Client for interacting with the blockchain to fetch transactions
     private final TronscanClient tronscanClient;
-    private final String address;
-    private Root root;
+    // Client for sending notifications via Telegram
+    private final TelegramBotClient telegramBotClient;
+    // A set of addresses to monitor for new transactions
+    private final Set<String> addresses;
+    // A map to keep track of the last known state of transactions for each address
+    private final Map<String, Root> roots;
 
-    public TransactionPoller(TronscanClient tronscanClient, String address) {
+    /**
+     * Constructs a new TransactionPoller.
+     *
+     * @param tronscanClient The client used for blockchain interactions.
+     * @param telegramBotClient The client used for Telegram notifications.
+     * @param addresses Initial list of addresses to monitor.
+     */
+    public TransactionPoller(TronscanClient tronscanClient, TelegramBotClient telegramBotClient, List<String> addresses) {
         this.tronscanClient = tronscanClient;
-        this.address = address;
+        this.telegramBotClient = telegramBotClient;
+        this.addresses = new CopyOnWriteArraySet<>(addresses);
+        this.roots = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Starts the process of polling for new transactions at fixed intervals. When new transactions are detected,
+     * subscribed users are notified via Telegram.
+     */
     public void startPolling() {
-        root = tronscanClient.getTRC20TransactionsList(address);
+        for (String address : addresses) {
+            roots.put(address, tronscanClient.getTRC20TransactionsList(address));
+        }
 
         final Runnable poller = () -> {
-            Root newRoot = tronscanClient.getTRC20TransactionsList(address);
+            for (String address : addresses) {
+                Root oldRoot = roots.get(address);
+                Root newRoot = tronscanClient.getTRC20TransactionsList(address);
 
-            List<Transaction> difference = RootComparator.getDifference(root, newRoot);
-            if (difference.isEmpty()) {
-                System.out.println("No difference yet\n");
-            } else {
-                System.out.println("New transaction(s):");
+                List<Transaction> difference = RootComparator.getDifference(oldRoot, newRoot);
+                if (!difference.isEmpty()) {
+                    String ending = difference.size() == 1 ? "" : "s";
+                    StringBuilder messageBuilder = new StringBuilder("New transaction" + ending + " for address " + address + ":\n");
 
-                ListIterator<Transaction> listIterator = difference.listIterator(difference.size());
-                while (listIterator.hasPrevious()) {
-                    Transaction currentTransaction = listIterator.previous();
-
-                    if (currentTransaction.getAmount() == 0) {
-                        TransactionInfo transactionInfo = tronscanClient.getTransactionInfo(currentTransaction.getHash());
-                        TokenTransferInfo tokenTransferInfo = transactionInfo.getTokenTransferInfo();
-
-                        currentTransaction.setToAddress(tokenTransferInfo.getTo_address());
-                        currentTransaction.setAmount(tokenTransferInfo.getAmount_str());
-                        currentTransaction.setTokenTypeSymbol(tokenTransferInfo.getSymbol());
-                        currentTransaction.setDecimals(tokenTransferInfo.getDecimals());
+                    for (Transaction currentTransaction : difference.reversed()) {
+                        messageBuilder.append("\n").append(currentTransaction).append("\n");
                     }
 
-                    System.out.println("\n" + currentTransaction + "\n");
-                }
+                    String message = messageBuilder.toString();
+                    for (long chatId : AddressManager.getReceivers(address)) {
+                        telegramBotClient.sendMessage(chatId, message);
+                    }
 
-                root = newRoot;
+                    roots.put(address, newRoot);
+                }
             }
         };
 
         scheduler.scheduleAtFixedRate(poller, 30, 30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Adds an address to the list of addresses being monitored for transactions.
+     *
+     * @param address The address to monitor.
+     */
+    public void addAddress(String address) {
+        addresses.add(address);
+        roots.put(address, tronscanClient.getTRC20TransactionsList(address));
+    }
+
+    /**
+     * Removes an address from the list of addresses being monitored.
+     *
+     * @param address The address to stop monitoring.
+     */
+    public void removeAddress(String address) {
+        addresses.remove(address);
     }
 }
