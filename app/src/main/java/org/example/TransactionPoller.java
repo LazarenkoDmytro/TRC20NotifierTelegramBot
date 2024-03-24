@@ -57,4 +57,8 @@ public class TransactionPoller {
         addresses.add(address);
         roots.put(address, tronscanClient.getTRC20TransactionsList(address));
     }
+
+    public void removeAddress(String address) {
+        addresses.remove(address);
+    }
 }

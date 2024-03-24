@@ -37,9 +37,19 @@ public class TelegramPoller {
                             if (!address.matches("T[A-Za-z1-9]{33}")) {
                                 telegramBotClient.sendMessage(id, "The address is incorrect. Try again");
                             } else {
-                                telegramBotClient.sendMessage(id, "Successfully tracking for " + address);
+                                telegramBotClient.sendMessage(id, "Successfully tracking the " + address);
                                 transactionPoller.addAddress(address);
                                 AddressManager.addReceiver(address, id);
+                            }
+                        } else if (text.startsWith("/untrackAddress ")) {
+                            String address = text.substring(16);
+
+                            if (!address.matches("T[A-Za-z1-9]{33}")) {
+                                telegramBotClient.sendMessage(id, "The address is incorrect. Try again");
+                            } else {
+                                telegramBotClient.sendMessage(id, "Successfully untracking the " + address);
+                                transactionPoller.removeAddress(address);
+                                AddressManager.removeReceiver(address, id);
                             }
                         }
                     }

@@ -20,4 +20,14 @@ public class AddressManager {
     public static void addReceiver(String address, long receiver) {
         addressToReceivers.computeIfAbsent(address, k -> new CopyOnWriteArraySet<>()).add(receiver);
     }
+
+    public static void removeReceiver(String address, long receiver) {
+        if (addressToReceivers.containsKey(address)) {
+            addressToReceivers.get(address).remove(receiver);
+
+            if (addressToReceivers.get(address).isEmpty()) {
+                addressToReceivers.remove(address);
+            }
+        }
+    }
 }
