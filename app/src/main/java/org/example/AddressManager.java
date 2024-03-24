@@ -1,22 +1,23 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class AddressManager {
-    private static final Map<String, List<Long>> addressToReceivers;
+    private static final Map<String, Set<Long>> addressToReceivers;
 
     static {
-        addressToReceivers = new HashMap<>();
+        addressToReceivers = new ConcurrentHashMap<>();
     }
 
-    public static List<Long> getReceivers(String address) {
-        return addressToReceivers.get(address);
+    public static Set<Long> getReceivers(String address) {
+        Set<Long> receivers = addressToReceivers.get(address);
+        return receivers == null ? Set.of() : receivers;
     }
 
     public static void addReceiver(String address, long receiver) {
-        addressToReceivers.computeIfAbsent(address, k -> new CopyOnWriteArrayList<>()).add(receiver);
+        addressToReceivers.computeIfAbsent(address, k -> new CopyOnWriteArraySet<>()).add(receiver);
     }
 }

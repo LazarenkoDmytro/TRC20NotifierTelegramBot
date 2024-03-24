@@ -1,25 +1,20 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class TransactionPoller {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final TronscanClient tronscanClient;
     private final TelegramBotClient telegramBotClient;
-    private final List<String> addresses;
+    private final Set<String> addresses;
     private final Map<String, Root> roots;
 
     public TransactionPoller(TronscanClient tronscanClient, TelegramBotClient telegramBotClient, List<String> addresses) {
         this.tronscanClient = tronscanClient;
         this.telegramBotClient = telegramBotClient;
-        this.addresses = new CopyOnWriteArrayList<>(addresses);
-        this.roots = new HashMap<>();
+        this.addresses = new CopyOnWriteArraySet<>(addresses);
+        this.roots = new ConcurrentHashMap<>();
     }
 
     public void startPolling() {
