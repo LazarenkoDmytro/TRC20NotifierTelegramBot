@@ -48,7 +48,7 @@ public class TelegramPoller {
 
                         // Process commands from users and take actions accordingly
                         if (text.equals("/start")) {
-                            telegramBotClient.sendMessage(id, "Please enter your address:");
+                            telegramBotClient.sendMessage(id, "Hello! Use the one of commands from the list :");
                         } else if (text.startsWith("/trackAddress ")) {
                             // Handle address tracking
                             String address = text.substring(14);
